@@ -1,3 +1,5 @@
+import copy
+
 board = ['-' for i in range(9)]
 occ_board = [0 for i in range(9)]
 ctr = 0
@@ -37,58 +39,65 @@ def printboard (board):
     print board[3], board[4], board[5]
     print board[6], board[7], board[8]
 
-def minmax (node, depth, maxPlayer, board, occ_board):
-    if (depth == 8) or winningMove(node, board, maxPlayer):
+def minmax (node, depth, maxPlayer, board, occ_board, m):
+    #print node
+    print "what old board should be"
+    printboard (board)
+    if (depth == (m-1)) or winningMove(node, board, maxPlayer):
+        printboard (board)
         if winningMove(node, board, maxPlayer) and (maxPlayer == True):
+            print "you win!"
             return (10 - depth)
         elif winningMove(node, board, maxPlayer) and (maxPlayer == False):
+            print "you lose!"
             return (depth - 10)
         else:
+            print "hi"
             return 0
-    n_board = board[:]
-    printboard (n_board)
+    n_board = copy.deepcopy(board)
+    #print "such deep, such node:", depth, node
     if maxPlayer:
         n_board[node] = 'o'
     else:
         n_board[node] = 'x'
-    n_occ_board = occ_board[:]
+    n_occ_board = copy.deepcopy(occ_board)
     n_occ_board[node] = 1
+
+    print "new board!"
+    printboard (n_board)
+
+    print "old board"
+    printboard (board)
+
     pos_moves = [i for i, j in enumerate(n_occ_board) if j == 0]
     if maxPlayer:
         bestValue = -float("inf")
         for i in pos_moves:
-            value = minmax(i, depth+1, False, n_board, n_occ_board)
+            value = minmax(i, depth+1, False, n_board, n_occ_board, m)
             bestValue = max(bestValue, value)
         return bestValue
     else:
         bestValue = float("inf")
         for i in pos_moves:
-            value = minmax(i, depth+1, True, n_board, n_occ_board)
+            value = minmax(i, depth+1, True, n_board, n_occ_board, m)
             bestValue = min(bestValue, value)
+        print "worst case", bestValue
         return bestValue
 
-board = ['o', '-', 'o',
-         'x', 'o', 'x',
-         'x', '-', '-']
-occ_board = [1, 0, 1,
-             1, 1, 1,
-             1, 0, 0]
-'''
-print "You get first move!"
-x = 1
-occ_board[1] = 1
-board[1] = 'x'
-printboard (board)
-'''
+board = ['o', '-', '-',
+         '-', 'o', '-',
+         'x', '-', 'x']
+occ_board = [1, 0, 0,
+             0, 1, 0,
+             1, 0, 1]
+
 moves = [i for i, j in enumerate(occ_board) if j == 0]
 
-for i in moves:
-    new_board = board[:]
-    new_occ_board = occ_board[:]
-    val = minmax(i, 0, True, new_board, new_occ_board)
-    print val
-    print new_occ_board
-    printboard (new_board)
+#for i in moves:
+new_board = board[:]
+new_occ_board = occ_board[:]
+val = minmax(1, 0, True, new_board, new_occ_board, 5)
+print "move and its value:", 1, val
 '''
 while (not(gameover (board))):
     if (ctr == 9):
