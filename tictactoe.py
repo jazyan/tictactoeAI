@@ -3,9 +3,11 @@ import random
 
 #initializing
 board = ['-' for i in range(9)]
-occ_board = [0 for i in range(9)]
 ctr = 0
 turn = 0
+
+def occupied(board):
+    return [0 if space == '-' else 1 for space in board]
 
 #check if game is over
 def gameover (b):
@@ -33,7 +35,7 @@ def printboard (board):
     print board[3], board[4], board[5]
     print board[6], board[7], board[8]
 
-def minmax (node, depth, maxPlayer, board, occ_board, m):
+def minmax (node, depth, maxPlayer, board, m):
     # check if node is terminal
     if (depth == (m-1)) or winningMove(node, board, maxPlayer):
         if winningMove(node, board, maxPlayer) and (maxPlayer == True):
@@ -44,15 +46,13 @@ def minmax (node, depth, maxPlayer, board, occ_board, m):
             return 0
     # copy board and occ_board
     n_board = copy.deepcopy(board)
-    n_occ_board = copy.deepcopy(occ_board)
     # update copy of board and occ_board
     if maxPlayer:
         n_board[node] = 'o'
     else:
         n_board[node] = 'x'
-    n_occ_board[node] = 1
     # list of possible nodes
-    pos_moves = [i for i, j in enumerate(n_occ_board) if j == 0]
+    pos_moves = [i for i, j in enumerate(occupied(n_board)) if j == 0]
     # min the max value if you're maxPlayer
     if maxPlayer:
         bestValue = float("inf")
@@ -77,15 +77,14 @@ while (not(gameover (board))):
     #    node = int(raw_input())
     #else:
     # ** indent below to play bot **
-    pos_moves = [i for i, j in enumerate(occ_board) if j == 0]
+    pos_moves = [i for i, j in enumerate(occupied(board)) if j == 0]
     # *** if playing bot and 1, change bestVal to float("inf") ***
     bestVal = -float("inf")
     node = float("inf")
     for i in pos_moves:
         new_board = copy.deepcopy(board)
-        new_occ_board = copy.deepcopy(occ_board)
         # *** if playing bot and 1, change to False
-        val = minmax(i, 0, True, new_board, new_occ_board, len(pos_moves))
+        val = minmax(i, 0, True, new_board, len(pos_moves))
         # *** if playing bot and 1, change to (val < bestVal) ***
         if (val > bestVal):
             node = i
@@ -97,9 +96,8 @@ while (not(gameover (board))):
     # ** end indent **
     for i in range(9):
         if node == i:
-            if not(occ_board[i]):
+            if not(occupied(board)[i]):
                 ctr += 1
-                occ_board[i] = 1
                 if turn == 0:
                     board[i] = 'x'
                     turn = 1
