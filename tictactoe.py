@@ -6,6 +6,8 @@ board = ['-' for i in range(9)]
 ctr = 0
 turn = 0
 
+minimax_counter = 0
+
 def occupied(board):
     return [0 if space == '-' else 1 for space in board]
 
@@ -36,6 +38,9 @@ def printboard (board):
     print board[6], board[7], board[8]
 
 def minmax (node, depth, maxPlayer, board, m):
+    # AK: you could memoize!
+    global minimax_counter
+    minimax_counter += 1 # 617643 is the number to beat :)
     # check if node is terminal
     if (depth == (m-1)) or winningMove(node, board, maxPlayer):
         if winningMove(node, board, maxPlayer) and (maxPlayer == True):
@@ -104,3 +109,4 @@ while (not(gameover (board))):
             else:
                 print "Occupied, please choose a valid move!"
     printboard(board)
+print minimax_counter
