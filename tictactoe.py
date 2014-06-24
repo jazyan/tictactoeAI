@@ -1,11 +1,13 @@
 import copy
 import random
 
+#initializing
 board = ['-' for i in range(9)]
 occ_board = [0 for i in range(9)]
 ctr = 0
 turn = 0
 
+#check if game is over
 def gameover (b):
     # rows for p1
     if (b[0]=='x' and b[1]=='x' and b[2]=='x') or (b[3]=='x' and b[4]=='x' and b[5]=='x') or (b[6]=='x' and b[7]=='x' and b[8]=='x'):
@@ -28,6 +30,7 @@ def gameover (b):
     else:
         return False
 
+# check if node n is the winning move
 def winningMove (n, b, p):
     cp = copy.deepcopy(b)
     if p:
@@ -37,23 +40,20 @@ def winningMove (n, b, p):
     return gameover (cp)
 
 def printboard (board):
+    print "********"
     print board[0], board[1], board[2]
     print board[3], board[4], board[5]
     print board[6], board[7], board[8]
 
 def minmax (node, depth, maxPlayer, board, occ_board, m):
+    # check if node is terminal
     if (depth == (m-1)) or winningMove(node, board, maxPlayer):
-        #printboard (board)
         if winningMove(node, board, maxPlayer) and (maxPlayer == True):
-            #print "you win! move:", node, "value", (10-depth)
             return (10 - depth)
         elif winningMove(node, board, maxPlayer) and (maxPlayer == False):
-            #print "you lose! move:", node, "value:", (depth-10)
             return (depth - 10)
         else:
-            #print "hi"
             return 0
-
     # copy board and occ_board
     n_board = copy.deepcopy(board)
     n_occ_board = copy.deepcopy(occ_board)
@@ -63,10 +63,8 @@ def minmax (node, depth, maxPlayer, board, occ_board, m):
     else:
         n_board[node] = 'x'
     n_occ_board[node] = 1
-
     # list of possible nodes
     pos_moves = [i for i, j in enumerate(n_occ_board) if j == 0]
-
     # min the max value if you're maxPlayer
     if maxPlayer:
         bestValue = float("inf")
@@ -79,39 +77,28 @@ def minmax (node, depth, maxPlayer, board, occ_board, m):
         bestValue = -float("inf")
         for i in pos_moves:
             value = minmax(i, depth+1, True, n_board, n_occ_board, m)
-            #print "move:", i, "value:", value
             bestValue = max(bestValue, value)
-        #print bestValue
         return bestValue
-'''
-board = ['x', '-', '-',
-         '-', '-', '-',
-         '-', '-', '-']
-occ_board = [1, 0, 0,
-             0, 0, 0,
-             0, 0, 0]
 
-moves = [i for i, j in enumerate(occ_board) if j == 0]
-
-for i in moves:
-    new_board = copy.deepcopy(board)
-    new_occ_board = copy.deepcopy(occ_board)
-    val = minmax(i, 0, True, new_board, new_occ_board, 4)
-    print "MOVE AND VALUE:", i, val
-'''
+# execute below until game over (won or 9 spaces filled)
 while (not(gameover (board))):
     if (ctr == 9):
         break;
-    #if turn == 0:
-        #node = int(raw_input())
+    # * uncomment below to play against bot, 0 to go first, 1 for second *
+    #if turn == 1:
+    #    node = int(raw_input())
     #else:
+    # ** indent below to play bot **
     pos_moves = [i for i, j in enumerate(occ_board) if j == 0]
+    # *** if playing bot and 1, change bestVal to float("inf") ***
     bestVal = -float("inf")
     node = float("inf")
     for i in pos_moves:
         new_board = copy.deepcopy(board)
         new_occ_board = copy.deepcopy(occ_board)
+        # *** if playing bot and 1, change to False
         val = minmax(i, 0, True, new_board, new_occ_board, len(pos_moves))
+        # *** if playing bot and 1, change to (val < bestVal) ***
         if (val > bestVal):
             node = i
             bestVal = val
@@ -119,6 +106,7 @@ while (not(gameover (board))):
             rand = random.randint(1,20)
             if rand <= 10:
                 node = i
+    # ** end indent **
     for i in range(9):
         if node == i:
             if not(occ_board[i]):
@@ -132,6 +120,4 @@ while (not(gameover (board))):
                     turn = 0
             else:
                 print "Occupied, please choose a valid move!"
-    print board[0], board[1], board[2]
-    print board[3], board[4], board[5]
-    print board[6], board[7], board[8]
+    printboard(board)
