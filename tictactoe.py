@@ -43,9 +43,9 @@ def minmax (node, depth, maxPlayer, board, m):
     minimax_counter += 1 # 617643 is the number to beat :)
     # check if node is terminal
     if (depth == (m-1)) or winningMove(node, board, maxPlayer):
-        if winningMove(node, board, maxPlayer) and (maxPlayer == True):
+        if winningMove(node, board, maxPlayer) and maxPlayer:
             return (10 - depth)
-        elif winningMove(node, board, maxPlayer) and (maxPlayer == False):
+        elif winningMove(node, board, maxPlayer) and not maxPlayer:
             return (depth - 10)
         else:
             return 0
@@ -58,7 +58,6 @@ def minmax (node, depth, maxPlayer, board, m):
         n_board[node] = 'x'
     # list of possible nodes
     pos_moves = [i for i, j in enumerate(occupied(n_board)) if j == 0]
-    # min the max value if you're maxPlayer
     if maxPlayer:
         bestValue = float("inf")
         function = min
