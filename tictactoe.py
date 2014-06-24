@@ -9,26 +9,12 @@ turn = 0
 
 #check if game is over
 def gameover (b):
-    # rows for p1
-    if (b[0]=='x' and b[1]=='x' and b[2]=='x') or (b[3]=='x' and b[4]=='x' and b[5]=='x') or (b[6]=='x' and b[7]=='x' and b[8]=='x'):
-        return True
-    # columns for p1
-    elif (b[0]=='x' and b[3]=='x' and b[6]=='x') or (b[1]=='x' and b[4]=='x' and b[7]=='x') or (b[2]=='x' and b[5]=='x' and b[8]=='x'):
-        return True
-    # diagonals for p1
-    elif (b[0]=='x' and b[4]=='x' and b[8]=='x') or (b[2]=='x' and b[4]=='x' and b[6]=='x'):
-        return True
-    # rows for p2
-    if (b[0]=='o' and b[1]=='o' and b[2]=='o') or (b[3]=='o' and b[4]=='o' and b[5]=='o') or (b[6]=='o' and b[7]=='o' and b[8]=='o'):
-        return True
-    # columns for p2
-    elif (b[0]=='o' and b[3]=='o' and b[6]=='o') or (b[1]=='o' and b[4]=='o' and b[7]=='o') or (b[2]=='o' and b[5]=='o' and b[8]=='o'):
-        return True
-    # diagonals for p2
-    elif (b[0]=='o' and b[4]=='o' and b[8]=='o') or (b[2]=='o' and b[4]=='o' and b[6]=='o'):
-        return True
-    else:
-        return False
+    for player in ['x', 'o']:
+        winning_threes = [[0,1,2], [3,4,5], [6,7,8], [0,3,6], [1,4,7], [2,5,8], [0,4,8], [2,4,6]]
+        for row in winning_threes:
+            if all([b[ind] == player for ind in row]):
+                return True
+    return False
 
 # check if node n is the winning move
 def winningMove (n, b, p):
