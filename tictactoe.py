@@ -28,11 +28,12 @@ def gameover (b):
         return False
 
 def winningMove (n, b, p):
+    cp = copy.deepcopy(b)
     if p:
-        b[n] = 'o'
+        cp[n] = 'o'
     else:
-        b[n] = 'x'
-    return gameover (b)
+        cp[n] = 'x'
+    return gameover (cp)
 
 def printboard (board):
     print board[0], board[1], board[2]
@@ -41,63 +42,62 @@ def printboard (board):
 
 def minmax (node, depth, maxPlayer, board, occ_board, m):
     #print node
-    print "what old board should be"
-    printboard (board)
     if (depth == (m-1)) or winningMove(node, board, maxPlayer):
         printboard (board)
         if winningMove(node, board, maxPlayer) and (maxPlayer == True):
-            print "you win!"
+            print "you win! move:", node, "value", (10-depth)
             return (10 - depth)
         elif winningMove(node, board, maxPlayer) and (maxPlayer == False):
-            print "you lose!"
+            print "you lose! move:", node, "value:", (depth-10)
             return (depth - 10)
         else:
             print "hi"
             return 0
+
+    # copy board and occ_board
     n_board = copy.deepcopy(board)
-    #print "such deep, such node:", depth, node
+    n_occ_board = copy.deepcopy(occ_board)
+    # update copy of board and occ_board
     if maxPlayer:
         n_board[node] = 'o'
     else:
         n_board[node] = 'x'
-    n_occ_board = copy.deepcopy(occ_board)
     n_occ_board[node] = 1
 
-    print "new board!"
-    printboard (n_board)
-
-    print "old board"
-    printboard (board)
-
+    # list of possible nodes
     pos_moves = [i for i, j in enumerate(n_occ_board) if j == 0]
+
+    # want to max the min value if you're maxPlayer
     if maxPlayer:
-        bestValue = -float("inf")
-        for i in pos_moves:
-            value = minmax(i, depth+1, False, n_board, n_occ_board, m)
-            bestValue = max(bestValue, value)
-        return bestValue
-    else:
         bestValue = float("inf")
         for i in pos_moves:
-            value = minmax(i, depth+1, True, n_board, n_occ_board, m)
+            value = minmax(i, depth+1, False, n_board, n_occ_board, m)
             bestValue = min(bestValue, value)
-        print "worst case", bestValue
+        return bestValue
+    # min the max value if you're not maxPlayer
+    else:
+        bestValue = -float("inf")
+        for i in pos_moves:
+            value = minmax(i, depth+1, True, n_board, n_occ_board, m)
+            print "move:", i, "value:", value
+            bestValue = max(bestValue, value)
+        print bestValue
         return bestValue
 
-board = ['o', '-', '-',
-         '-', 'o', '-',
-         'x', '-', 'x']
-occ_board = [1, 0, 0,
+board = ['x', '-', 'x',
+         '-', 'x', '-',
+         'o', '-', 'o']
+occ_board = [1, 0, 1,
              0, 1, 0,
              1, 0, 1]
 
 moves = [i for i, j in enumerate(occ_board) if j == 0]
 
-#for i in moves:
-new_board = board[:]
-new_occ_board = occ_board[:]
-val = minmax(1, 0, True, new_board, new_occ_board, 5)
-print "move and its value:", 1, val
+for i in moves:
+    new_board = copy.deepcopy(board)
+    new_occ_board = copy.deepcopy(occ_board)
+    val = minmax(i, 0, True, new_board, new_occ_board, 4)
+    print "MOVE AND VALUE:", i, val
 '''
 while (not(gameover (board))):
     if (ctr == 9):
