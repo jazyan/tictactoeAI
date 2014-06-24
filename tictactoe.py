@@ -18,12 +18,14 @@ def gameover (b):
 
 # check if node n is the winning move
 def winningMove (n, b, p):
-    cp = copy.deepcopy(b)
     if p:
-        cp[n] = 'o'
+        b[n] = 'o'
     else:
-        cp[n] = 'x'
-    return gameover (cp)
+        b[n] = 'x'
+    is_win = gameover(b)
+    b[n] = '-'
+    return is_win
+
 
 def printboard (board):
     print "********"
