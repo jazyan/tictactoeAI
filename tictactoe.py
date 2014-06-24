@@ -56,17 +56,14 @@ def minmax (node, depth, maxPlayer, board, m):
     # min the max value if you're maxPlayer
     if maxPlayer:
         bestValue = float("inf")
-        for i in pos_moves:
-            value = minmax(i, depth+1, False, n_board, n_occ_board, m)
-            bestValue = min(bestValue, value)
-        return bestValue
-    # max the min value if you're not maxPlayer
+        function = min
     else:
         bestValue = -float("inf")
-        for i in pos_moves:
-            value = minmax(i, depth+1, True, n_board, n_occ_board, m)
-            bestValue = max(bestValue, value)
-        return bestValue
+        function = max
+    for i in pos_moves:
+        value = minmax(i, depth+1, (not maxPlayer), n_board, m)
+        bestValue = function(bestValue, value)
+    return bestValue
 
 # execute below until game over (won or 9 spaces filled)
 while (not(gameover (board))):
